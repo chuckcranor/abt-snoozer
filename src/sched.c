@@ -8,11 +8,15 @@
 #include <abt.h>
 
 #include <abt-snoozer.h>
+#include "abt-snoozer-internal.h"
+
+/* derived from argobots/src/sched/basic.c */
+/* TODO: licensing */
 
 /******************************************************************************/
 /* Scheduler data structure and functions                                     */
 /******************************************************************************/
-typedef struct hgargo_sched_data sched_data_t;
+typedef struct abt_snoozer_sched_data sched_data_t;
 
 static int sched_init(ABT_sched sched, ABT_sched_config config)
 {
@@ -84,7 +88,7 @@ static int sched_free(ABT_sched sched)
     return ABT_SUCCESS;
 }
 
-void hgargo_create_scheds(int num, ABT_pool *pools, ABT_sched *scheds)
+void abt_snoozer_create_scheds(int num, ABT_pool *pools, ABT_sched *scheds)
 {
     ABT_sched_config config;
     ABT_pool *my_pools;

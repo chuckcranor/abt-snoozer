@@ -27,3 +27,5 @@ to CFLAGS and "-Lpathtolibevlib" to the LDFLAGS.
 ## To Do:
 
 * Add autoconf detection of libev
+* Add licensing (take into account that portions are based on modified code
+  from Argobots)

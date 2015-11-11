@@ -7,8 +7,11 @@
 #include <stdio.h>
 #include <abt.h>
 #include <abt-snoozer.h>
+#include "abt-snoozer-internal.h"
 
 /* FIFO pool implementation */
+/* derived from argobots/src/pool/fifo.c */
+/* TODO: licensing */
 
 static int      pool_init(ABT_pool pool, ABT_pool_config config);
 static int      pool_free(ABT_pool pool);
@@ -20,7 +23,7 @@ static ABT_unit pool_pop_private(ABT_pool pool);
 static int      pool_remove_shared(ABT_pool pool, ABT_unit unit);
 static int      pool_remove_private(ABT_pool pool, ABT_unit unit);
 
-typedef struct hgargo_unit unit_t;
+typedef struct abt_snoozer_unit unit_t;
 static ABT_unit_type unit_get_type(ABT_unit unit);
 static ABT_thread unit_get_thread(ABT_unit unit);
 static ABT_task unit_get_task(ABT_unit unit);
@@ -29,7 +32,7 @@ static ABT_unit unit_create_from_thread(ABT_thread thread);
 static ABT_unit unit_create_from_task(ABT_task task);
 static void unit_free(ABT_unit *unit);
 
-typedef struct hgargo_pool_data data_t;
+typedef struct abt_snoozer_pool_data data_t;
 
 static inline data_t *pool_get_data_ptr(void *p_data)
 {
@@ -38,7 +41,7 @@ static inline data_t *pool_get_data_ptr(void *p_data)
 
 
 /* Obtain the FIFO pool definition according to the access type */
-int hgargo_pool_get_def(ABT_pool_access access, ABT_pool_def *p_def)
+int abt_snoozer_pool_get_def(ABT_pool_access access, ABT_pool_def *p_def)
 {
     int abt_errno = ABT_SUCCESS;
 
