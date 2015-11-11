@@ -41,8 +41,40 @@ LIBS="$ARGOBOTS_LIBS $LIBS"
 CPPFLAGS="$ARGOBOTS_CFLAGS $CPPFLAGS"
 CFLAGS="$ARGOBOTS_CFLAGS $CFLAGS"
 
-dnl TODO: autoconf check for libev
+dnl =========================================================================
+dnl ==== Check for libev ====================================================
+dnl =========================================================================
 
+AC_ARG_WITH([libev],
+            [AS_HELP_STRING([[--with-libev=[DIR]]], [Use libev from specified directory])],
+            [
+                CPPFLAGS="$CPPFLAGS -I${with_libev}/include"
+                # note: add rpath too because stock libev install uses
+                # shared libs
+                LDFLAGS="$LDFLAGS -Wl,-rpath=${with_libev}/lib -L${with_libev}/lib"
+                SNOOZER_PKGCONFIG_LIBS="${SNOOZER_PKGCONFIG_LIBS} -L${with_libev}/lib -lev -lm"
+            ],
+            [
+                SNOOZER_PKGCONFIG_LIBS="${SNOOZER_PKGCONFIG_LIBS} -lev -lm"
+            ]
+            )
+
+AC_CHECK_HEADER([ev.h],[],
+         [AC_MSG_ERROR([Could not find libev header in
+          ${with_libev}/include!])])
+
+AC_CHECK_LIB([ev],[ev_once],[evok=1; LIBS="-lev $LIBS"],
+             [evok=0])
+if test "A$evok" == "A0"; then
+   AC_CHECK_LIB([m], [log], [], [])
+   dnl Needs to be a different function to avoid hitting cache
+   AC_CHECK_LIB([ev], [ev_break], [],
+             [AC_MSG_ERROR([Could not find useable
+           libev library at prefix ${with_libev}/lib!])])
+fi
+
+
+AC_SUBST(SNOOZER_PKGCONFIG_LIBS)
 AC_CONFIG_FILES([Makefile maint/abt-snoozer.pc])
 AC_OUTPUT
  

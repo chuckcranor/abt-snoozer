@@ -21,8 +21,8 @@ Example configuration:
     ../configure --prefix=/home/pcarns/working/install \
         PKG_CONFIG_PATH=/home/pcarns/working/install/lib/pkgconfig 
 
-If libev is not in your system path, then you can add "-Ipathtolibevinclude"
-to CFLAGS and "-Lpathtolibevlib" to the LDFLAGS.
+If libev is not in your system path, then you can add --with-libev=PATH to
+the configure command line.
 
 ## To Do:
 
