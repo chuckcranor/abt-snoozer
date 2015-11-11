@@ -1,0 +1,3 @@
+src_libabt_snoozer_a_SOURCES += \
+ src/sched.c \
+ src/pool.c
