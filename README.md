@@ -24,6 +24,16 @@ Example configuration:
 If libev is not in your system path, then you can add --with-libev=PATH to
 the configure command line.
 
+## Examples
+
+The following example programs are provided in the examples subdirectory:
+
+* basic-standard: Illustrates one execution stream waiting for completion of
+  a thread running on a separate execution stream using the default Argobots
+  scheduler.
+* basic-snoozer: Same as the above, but using the abt-snoozer library to
+  make sure that the idle execution stream sleeps while waiting.
+
 ## To Do:
 
 * Add licensing (take into account that portions are based on modified code
