@@ -11,10 +11,22 @@
 
 static int abt_snoozer_setup_ev(struct abt_snoozer_ev *ev);
 static void sched_eloop_breaker_cb(EV_P_ ev_async *w, int revents);
+static int abt_snoozer_make_pool_and_sched(ABT_pool *pool, ABT_sched *sched);
 
 int ABT_snoozer_xstream_create(ABT_pool *newpool, ABT_xstream *newxstream)
 {
-    return(-1);
+    int ret;
+    ABT_sched sched;
+
+    ret = abt_snoozer_make_pool_and_sched(newpool, &sched);
+    if(ret != 0)
+        return(ret);
+    
+    ret = ABT_xstream_create(sched, newxstream);
+    if(ret != 0)
+        return(ret);
+
+    return(0);
 }
 
 /* creates a new pool and scheduler that are linked by an event loop */
