@@ -34,7 +34,4 @@ The following example programs are provided in the examples subdirectory:
 * basic-snoozer: Same as the above, but using the abt-snoozer library to
   make sure that the idle execution stream sleeps while waiting.
 
-## To Do:
 
-* Add licensing (take into account that portions are based on modified code
-  from Argobots)
