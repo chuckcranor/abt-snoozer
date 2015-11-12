@@ -12,6 +12,7 @@
 
 struct abt_snoozer_ev {
     ev_async *sched_eloop_breaker;
+    ev_timer *sched_eloop_timer;
     struct ev_loop *sched_eloop;
 };
 

@@ -71,6 +71,11 @@ static void sched_run(ABT_sched sched)
             if(loop_total == 0)
             {
                 /* nothing to do; sleep unless signaled by a pool */
+
+                /* note: set a 1 ms timer to make sure that we have a chance
+                 * to observe stop notifications
+                 */
+                ev_timer_start(p_data->ev.sched_eloop, p_data->ev.sched_eloop_timer);
                 ev_run(p_data->ev.sched_eloop, 0);
             }
         }

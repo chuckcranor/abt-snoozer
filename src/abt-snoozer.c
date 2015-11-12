@@ -12,6 +12,7 @@
 
 static int abt_snoozer_setup_ev(struct abt_snoozer_ev *ev);
 static void sched_eloop_breaker_cb(EV_P_ ev_async *w, int revents);
+static void sched_eloop_timer_cb(EV_P_ ev_timer *w, int revents);
 static int abt_snoozer_make_pool_and_sched(ABT_pool *pool, ABT_sched *sched);
 
 int ABT_snoozer_xstream_create(ABT_pool *newpool, ABT_xstream *newxstream)
@@ -99,6 +100,13 @@ int ABT_snoozer_xstream_self_set(void)
     return(0);
 } 
 
+static void sched_eloop_timer_cb(EV_P_ ev_timer *w, int revents)
+{
+    /* do nothing except break out of the event loop */
+    ev_break(EV_A_ EVBREAK_ONE);
+    return;
+}
+
 static void sched_eloop_breaker_cb(EV_P_ ev_async *w, int revents)
 {
     /* do nothing except break out of the event loop */
@@ -111,9 +119,17 @@ static int abt_snoozer_setup_ev(struct abt_snoozer_ev *ev)
     ev->sched_eloop_breaker = malloc(sizeof(*ev->sched_eloop_breaker));
     if(!ev->sched_eloop_breaker)
         return(-1);
+    
+    ev->sched_eloop_timer = malloc(sizeof(*ev->sched_eloop_timer));
+    if(!ev->sched_eloop_timer)
+    {
+        free(ev->sched_eloop_breaker);
+        return(-1);
+    }
 
     ev->sched_eloop = ev_loop_new(EVFLAG_AUTO);
     ev_async_init(ev->sched_eloop_breaker, sched_eloop_breaker_cb);
+    ev_timer_init(ev->sched_eloop_timer, sched_eloop_timer_cb, 0.1, 0);
     ev_async_start(ev->sched_eloop, ev->sched_eloop_breaker);
 
     return(0);
