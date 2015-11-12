@@ -16,19 +16,28 @@
  * both execution streams will sleep while idle.
  */
 
-void thread_fn(void *arg)
+void thread_fn(void *_arg)
 {
+    ABT_eventual *eventual = _arg;
+    int ret;
+
     /* NOTE: this will block whatever ES it executes on */
     sleep(5);
+
+    /* set eventual when done */
+    ABT_eventual_set(*eventual, &ret, sizeof(ret));
+
     return;
 }
 
 int main(int argc, char **argv) 
 {
     int ret;
+    int *eret;
     ABT_thread tid;
     ABT_pool pool2;
     ABT_xstream xstream2;
+    ABT_eventual eventual;
     
     ret = ABT_init(argc, argv);
     if(ret != 0)
@@ -46,15 +55,26 @@ int main(int argc, char **argv)
     assert(ret == 0);
 
     /* launch a ULT on the new ES that will do nothing except sleep() */
-    ABT_thread_create(pool2, thread_fn, NULL, ABT_THREAD_ATTR_NULL, &tid);
+    ABT_eventual_create(sizeof(eret), &eventual);
+    ABT_thread_create(pool2, thread_fn, &eventual, ABT_THREAD_ATTR_NULL, &tid);
+
+    /* wait on eventual */
+    ABT_eventual_wait(eventual, (void**)&eret);
+    assert(*eret == 0);
+
+    fprintf(stderr, "FOO: A\n");
 
     /* wait on the ULT to complete */
     ABT_thread_join(tid);
     ABT_thread_free(&tid);
 
+    fprintf(stderr, "FOO: B\n");
     /* wait on the ES to complete */
     ABT_xstream_join(xstream2);
+    fprintf(stderr, "FOO: C\n");
     ABT_xstream_free(&xstream2);
+
+    ABT_eventual_free(&eventual);
 
     ABT_finalize();
 
