@@ -1,0 +1,6 @@
+TESTS += \
+ tests/comparison.sh
+
+EXTRA_DIST += \
+ tests/comparison.sh
+
