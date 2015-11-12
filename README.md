@@ -24,6 +24,12 @@ Example configuration:
 If libev is not in your system path, then you can add --with-libev=PATH to
 the configure command line.
 
+Example build:
+
+    make
+    make check
+    make install
+
 ## Examples
 
 The following example programs are provided in the examples subdirectory:
