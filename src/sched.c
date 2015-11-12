@@ -4,6 +4,7 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 #include <abt.h>
 
@@ -70,7 +71,9 @@ static void sched_run(ABT_sched sched)
             if(loop_total == 0)
             {
                 /* nothing to do; sleep unless signaled by a pool */
+                fprintf(stderr, "FOO: calling ev_run for eloop %p\n", p_data->ev.sched_eloop);
                 ev_run(p_data->ev.sched_eloop, 0);
+                fprintf(stderr, "FOO: done calling ev_run for eloop %p\n", p_data->ev.sched_eloop);
             }
         }
     }

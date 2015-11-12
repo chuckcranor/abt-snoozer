@@ -4,6 +4,7 @@
  * See COPYRIGHT in top-level directory.
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <abt.h>
 #include <abt-snoozer.h>
@@ -55,6 +56,7 @@ static int abt_snoozer_make_pool_and_sched(ABT_pool *pool, ABT_sched *sched)
     /* set up event loop that will like the pool to the scheduler */
 
     ABT_sched_get_data(*sched, (void**)(&sched_data));
+    fprintf(stderr, "FOO: got sched_data %p\n", sched_data);
     ABT_pool_get_data(*pool, (void**)(&pool_data));
 
     ret = abt_snoozer_setup_ev(&sched_data->ev);
@@ -64,6 +66,7 @@ static int abt_snoozer_make_pool_and_sched(ABT_pool *pool, ABT_sched *sched)
         ABT_pool_free(pool);
         return(ret);
     }
+    fprintf(stderr, "FOO: created eloop %p\n", sched_data->ev.sched_eloop);
     pool_data->ev = sched_data->ev;
 
     ABT_sched_set_data(*sched, sched_data);
@@ -111,7 +114,7 @@ static int abt_snoozer_setup_ev(struct abt_snoozer_ev *ev)
     if(!ev->sched_eloop_breaker)
         return(-1);
 
-    ev->sched_eloop = ev_default_loop(EVFLAG_AUTO);
+    ev->sched_eloop = ev_loop_new(EVFLAG_AUTO);
     ev_async_init(ev->sched_eloop_breaker, sched_eloop_breaker_cb);
     ev_async_start(ev->sched_eloop, ev->sched_eloop_breaker);
 
