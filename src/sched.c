@@ -88,11 +88,12 @@ static int sched_free(ABT_sched sched)
     return ABT_SUCCESS;
 }
 
-void abt_snoozer_create_scheds(int num, ABT_pool *pools, ABT_sched *scheds)
+int abt_snoozer_create_scheds(int num, ABT_pool *pools, ABT_sched *scheds)
 {
     ABT_sched_config config;
     ABT_pool *my_pools;
     int i, k;
+    int ret;
 
     ABT_sched_config_var cv_event_freq = {
         .idx = 0,
@@ -108,19 +109,34 @@ void abt_snoozer_create_scheds(int num, ABT_pool *pools, ABT_sched *scheds)
     };
 
     /* Create a scheduler config */
-    ABT_sched_config_create(&config, cv_event_freq, 10,
+    ret = ABT_sched_config_create(&config, cv_event_freq, 10,
                             ABT_sched_config_var_end);
+    if(ret != 0)
+        return(ret);
 
     my_pools = (ABT_pool *)malloc(num * sizeof(ABT_pool));
+    if(!my_pools)
+    {
+        ABT_sched_config_free(&config);
+        return(-1);
+    }
     for (i = 0; i < num; i++) {
         for (k = 0; k < num; k++) {
             my_pools[k] = pools[(i + k) % num];
         }
 
-        ABT_sched_create(&sched_def, num, my_pools, config, &scheds[i]);
+        ret = ABT_sched_create(&sched_def, num, my_pools, config, &scheds[i]);
+        if(ret != 0)
+        {
+            free(my_pools);
+            ABT_sched_config_free(&config);
+            return(ret);
+        }
     }
     free(my_pools);
 
     ABT_sched_config_free(&config);
+
+    return(0);
 }
 

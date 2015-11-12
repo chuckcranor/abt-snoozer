@@ -86,7 +86,7 @@ int abt_snoozer_pool_get_def(ABT_pool_access access, ABT_pool_def *p_def)
 
 /* Pool functions */
 
-int pool_init(ABT_pool pool, ABT_pool_config config)
+static int pool_init(ABT_pool pool, ABT_pool_config config)
 {
     int abt_errno = ABT_SUCCESS;
     ABT_pool_access access;

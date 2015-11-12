@@ -38,10 +38,12 @@ int main(int argc, char **argv)
     }
 
     /* set primary ES to use the snoozer */
-    ABT_snoozer_xstream_self_set();
+    ret = ABT_snoozer_xstream_self_set();
+    assert(ret == 0);
 
     /* create one additional ES using the snoozer */
-    ABT_snoozer_xstream_create(&pool2, &xstream2);
+    ret = ABT_snoozer_xstream_create(&pool2, &xstream2);
+    assert(ret == 0);
 
     /* launch a ULT on the new ES that will do nothing except sleep() */
     ABT_thread_create(pool2, thread_fn, NULL, ABT_THREAD_ATTR_NULL, &tid);

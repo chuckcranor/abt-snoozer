@@ -39,4 +39,7 @@ struct abt_snoozer_sched_data {
     struct abt_snoozer_ev ev;
 };
 
+int abt_snoozer_pool_get_def(ABT_pool_access access, ABT_pool_def *p_def);
+int abt_snoozer_create_scheds(int num, ABT_pool *pools, ABT_sched *scheds);
+
 #endif /* __ABT_SNOOZER_INTERNAL */
