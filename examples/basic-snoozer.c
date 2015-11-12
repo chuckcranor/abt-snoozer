@@ -62,16 +62,12 @@ int main(int argc, char **argv)
     ABT_eventual_wait(eventual, (void**)&eret);
     assert(*eret == 0);
 
-    fprintf(stderr, "FOO: A\n");
-
     /* wait on the ULT to complete */
     ABT_thread_join(tid);
     ABT_thread_free(&tid);
 
-    fprintf(stderr, "FOO: B\n");
     /* wait on the ES to complete */
     ABT_xstream_join(xstream2);
-    fprintf(stderr, "FOO: C\n");
     ABT_xstream_free(&xstream2);
 
     ABT_eventual_free(&eventual);
