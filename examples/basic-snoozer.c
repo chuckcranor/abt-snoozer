@@ -19,7 +19,7 @@
 void thread_fn(void *_arg)
 {
     ABT_eventual *eventual = _arg;
-    int ret;
+    int ret = 0;
 
     /* NOTE: this will block whatever ES it executes on */
     sleep(5);

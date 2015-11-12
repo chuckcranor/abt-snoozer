@@ -15,10 +15,17 @@
  * default ABT scheduler behavior.
  */
 
-void thread_fn(void *arg)
+void thread_fn(void *_arg)
 {
+    ABT_eventual *eventual = _arg;
+    int ret = 0;
+
     /* NOTE: this will block whatever ES it executes on */
     sleep(5);
+    
+    /* set eventual when done */
+    ABT_eventual_set(*eventual, &ret, sizeof(ret));
+
     return;
 }
 
@@ -28,6 +35,8 @@ int main(int argc, char **argv)
     ABT_thread tid;
     ABT_pool pool2;
     ABT_xstream xstream2;
+    ABT_eventual eventual;
+    int *eret;
     
     ret = ABT_init(argc, argv);
     if(ret != 0)
@@ -41,7 +50,12 @@ int main(int argc, char **argv)
     ABT_xstream_get_main_pools(xstream2, 1, &pool2);
 
     /* launch a ULT on the new ES that will do nothing except sleep() */
-    ABT_thread_create(pool2, thread_fn, NULL, ABT_THREAD_ATTR_NULL, &tid);
+    ABT_eventual_create(sizeof(eret), &eventual);
+    ABT_thread_create(pool2, thread_fn, &eventual, ABT_THREAD_ATTR_NULL, &tid);
+
+    /* wait on eventual */
+    ABT_eventual_wait(eventual, (void**)&eret);
+    assert(*eret == 0);
 
     /* wait on the ULT to complete */
     ABT_thread_join(tid);
