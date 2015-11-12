@@ -65,9 +65,9 @@ static void sched_run(ABT_sched sched)
 
         if (++work_count >= p_data->event_freq) {
             work_count = 0;
+            ABT_xstream_check_events(sched);
             ABT_sched_has_to_stop(sched, &stop);
             if (stop == ABT_TRUE) break;
-            ABT_xstream_check_events(sched);
             if(loop_total == 0)
             {
                 /* nothing to do; sleep unless signaled by a pool */
