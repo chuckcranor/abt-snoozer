@@ -17,56 +17,64 @@ int ABT_snoozer_xstream_create(ABT_pool *newpool, ABT_xstream *newxstream)
     return(-1);
 }
 
+/* creates a new pool and scheduler that are linked by an event loop */
+static int abt_snoozer_make_pool_and_sched(ABT_pool *pool, ABT_sched *sched)
+{
+    int ret;
+    ABT_pool_def pool_def;
+    struct abt_snoozer_sched_data *sched_data;
+    struct abt_snoozer_pool_data *pool_data;
+
+    ret = abt_snoozer_pool_get_def(ABT_POOL_ACCESS_MPMC, &pool_def);
+    if(ret != 0)
+        return(ret);
+
+    ret = ABT_pool_create(&pool_def, ABT_POOL_CONFIG_NULL, pool);
+    if(ret != 0)
+        return(ret);
+
+    ret = abt_snoozer_create_scheds(1, pool, sched);
+    if(ret != 0)
+    {
+        ABT_pool_free(pool);
+        return(ret);
+    }
+
+    /* set up event loop that will like the pool to the scheduler */
+
+    ABT_sched_get_data(*sched, (void**)(&sched_data));
+    ABT_pool_get_data(*pool, (void**)(&pool_data));
+
+    ret = abt_snoozer_setup_ev(&sched_data->ev);
+    if(ret != 0)
+    {
+        ABT_sched_free(sched);
+        ABT_pool_free(pool);
+        return(ret);
+    }
+    pool_data->ev = sched_data->ev;
+
+    ABT_sched_set_data(*sched, sched_data);
+    ABT_pool_set_data(*pool, pool_data);
+   
+    return(0);
+}
+
 int ABT_snoozer_xstream_self_set(void)
 {
     int ret;
     ABT_xstream xstream;
     ABT_pool pool;
     ABT_sched sched;
-    ABT_pool_def pool_def;
-    struct abt_snoozer_sched_data *sched_data;
-    struct abt_snoozer_pool_data *pool_data;
 
     ret = ABT_xstream_self(&xstream);
     if(ret != 0)
         return(ret);
 
-    /* create new pool and scheduler */
-
-    ret = abt_snoozer_pool_get_def(ABT_POOL_ACCESS_MPMC, &pool_def);
+    ret = abt_snoozer_make_pool_and_sched(&pool, &sched);
     if(ret != 0)
         return(ret);
-
-    ret = ABT_pool_create(&pool_def, ABT_POOL_CONFIG_NULL, &pool);
-    if(ret != 0)
-        return(ret);
-
-    ret = abt_snoozer_create_scheds(1, &pool, &sched);
-    if(ret != 0)
-    {
-        ABT_pool_free(&pool);
-        return(ret);
-    }
-
-    /* set up event loop that will like the pool to the scheduler */
-
-    ABT_sched_get_data(sched, (void**)(&sched_data));
-    ABT_pool_get_data(pool, (void**)(&pool_data));
-
-    ret = abt_snoozer_setup_ev(&sched_data->ev);
-    if(ret != 0)
-    {
-        ABT_sched_free(&sched);
-        ABT_pool_free(&pool);
-        return(ret);
-    }
-    pool_data->ev = sched_data->ev;
-
-    ABT_sched_set_data(sched, sched_data);
-    ABT_pool_set_data(pool, pool_data);
     
-    /* override existing scheduler */
-
     ret = ABT_xstream_set_main_sched(xstream, sched);
     if(ret != 0)
     {
