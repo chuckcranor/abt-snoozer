@@ -8,6 +8,6 @@ Description: Utility library to make Argobots execution streams sleep when idle
 Version: 0.1
 URL: https://xgitlab.cels.anl.gov/sds/abt-snoozer
 Requires: argobots
-Libs.private: @SNOOZER_PKGCONFIG_LIBS@
 Libs: -L${libdir} -labt-snoozer
+Libs.private: @SNOOZER_PKGCONFIG_LIBS@
 Cflags: -I${includedir}
