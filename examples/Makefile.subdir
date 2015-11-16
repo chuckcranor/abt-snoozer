@@ -1,8 +1,11 @@
-bin_PROGRAMS += examples/basic-standard examples/basic-snoozer
+bin_PROGRAMS += examples/basic-standard examples/basic-snoozer examples/sharedpool-standard
 
 examples_basic_standard_SOURCES = examples/basic-standard.c 
 examples_basic_standard_LDADD = src/libabt-snoozer.a
 
 examples_basic_snoozer_SOURCES = examples/basic-snoozer.c 
 examples_basic_snoozer_LDADD = src/libabt-snoozer.a
+
+examples_sharedpool_standard_SOURCES = examples/sharedpool-standard.c 
+examples_sharedpool_standard_LDADD = src/libabt-snoozer.a
 
