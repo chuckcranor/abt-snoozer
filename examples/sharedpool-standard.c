@@ -18,6 +18,7 @@ void thread_fn(void *_arg)
 {
     ABT_eventual *eventual = _arg;
     int ret = 0;
+    printf("starting ULT.\n");
 
     /* NOTE: this will block whatever ES it executes on */
     sleep(5);
@@ -25,6 +26,7 @@ void thread_fn(void *_arg)
     /* set eventual when done */
     ABT_eventual_set(*eventual, &ret, sizeof(ret));
 
+    printf("finishing ULT.\n");
     return;
 }
 
