@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <assert.h>
 #include <abt.h>
 
 #include <abt-snoozer.h>
@@ -34,7 +35,7 @@ static void sched_run(ABT_sched sched)
     uint32_t work_count = 0;
     sched_data_t *p_data;
     int num_pools;
-    ABT_pool *pools;
+    ABT_pool pool;
     ABT_unit unit;
     int target;
     ABT_bool stop;
@@ -43,25 +44,18 @@ static void sched_run(ABT_sched sched)
 
     ABT_sched_get_data(sched, (void **)&p_data);
     ABT_sched_get_num_pools(sched, &num_pools);
-    pools = (ABT_pool *)malloc(num_pools * sizeof(ABT_pool));
-    ABT_sched_get_pools(sched, num_pools, 0, pools);
+    /* this scheduler will only work with exactly one pool */
+    assert(num_pools == 1);
+    ABT_sched_get_pools(sched, num_pools, 0, &pool);
 
     while (1) {
         loop_total = 0;
         /* Execute one work unit from the scheduler's pool */
-        ABT_pool_pop(pools[0], &unit);
+        ABT_pool_pop(pool, &unit);
         if (unit != ABT_UNIT_NULL) {
-            ABT_xstream_run_unit(unit, pools[0]);
+            ABT_xstream_run_unit(unit, pool);
             loop_total++;
-        } else if (num_pools > 1) {
-            /* Steal a work unit from other pools */
-            target = (num_pools == 2) ? 1 : (rand_r(&seed) % (num_pools-1) + 1);
-            ABT_pool_pop(pools[target], &unit);
-            if (unit != ABT_UNIT_NULL) {
-                ABT_xstream_run_unit(unit, pools[target]);
-                loop_total++;
-            }
-        }
+        } 
 
         if (++work_count >= p_data->event_freq) {
             work_count = 0;
@@ -80,8 +74,6 @@ static void sched_run(ABT_sched sched)
             }
         }
     }
-
-    free(pools);
 }
 
 static int sched_free(ABT_sched sched)
