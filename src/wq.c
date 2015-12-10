@@ -119,9 +119,11 @@ void abt_snoozer_wq_wait(struct abt_snoozer_wq *queue,
     ev_run(element->sched_eloop, 0);
 
     ABT_mutex_spinlock(queue->mutex);
+    ev_timer_stop(element->sched_eloop, &element->sched_eloop_timer);
+
     if(element->wq)
     {
-        /* take self off of queue */
+        /* take self off of queue if timer popped without wake */
         if(element->wq->head == element)
             element->wq->head = element->next;
         if(element->prev)
@@ -132,11 +134,7 @@ void abt_snoozer_wq_wait(struct abt_snoozer_wq *queue,
         element->next = NULL;
         element->wq = NULL;
     }
-    else
-    {
-        /* already off queue; stop timer */
-        ev_timer_stop(element->sched_eloop, &element->sched_eloop_timer);
-    }
+
     ABT_mutex_unlock(queue->mutex);
 
     return;
