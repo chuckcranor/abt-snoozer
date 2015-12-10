@@ -19,8 +19,8 @@
 
 struct abt_snoozer_wq_element
 {
-    ev_async *sched_eloop_breaker;
-    ev_timer *sched_eloop_timer;
+    ev_async sched_eloop_breaker;
+    ev_timer sched_eloop_timer;
     struct ev_loop *sched_eloop;
     struct abt_snoozer_wq_element *next;
     struct abt_snoozer_wq_element *prev;
@@ -37,40 +37,52 @@ struct abt_snoozer_wq
 static void sched_eloop_breaker_cb(EV_P_ ev_async *w, int revents);
 static void sched_eloop_timer_cb(EV_P_ ev_timer *w, int revents);
 
-void abt_snoozer_wq_init(struct abt_snoozer_wq *queue)
+struct abt_snoozer_wq* abt_snoozer_wq_alloc(void)
 {
+    struct abt_snoozer_wq *queue;
+
+    queue = malloc(sizeof(*queue));
+    if(!queue)
+        return(NULL);
     queue->head = NULL;
     queue->pending = 0;
     ABT_mutex_create(&queue->mutex);
     
-    return;
+    return(queue);
 }
 
-int abt_snoozer_wq_element_init(struct abt_snoozer_wq_element *element)
+void abt_snoozer_wq_free(struct abt_snoozer_wq *wq)
 {
-    element->sched_eloop_breaker = malloc(sizeof(*element->sched_eloop_breaker));
-    if(!element->sched_eloop_breaker)
-        return(-1);
-    
-    element->sched_eloop_timer = malloc(sizeof(*element->sched_eloop_timer));
-    if(!element->sched_eloop_timer)
-    {
-        free(element->sched_eloop_breaker);
-        return(-1);
-    }
+    ABT_mutex_free(&wq->mutex);
+    free(wq);
+}
+
+struct abt_snoozer_wq_element* abt_snoozer_wq_element_alloc(void)
+{
+    struct abt_snoozer_wq_element *element;
+
+    element = malloc(sizeof(*element));
+    if(!element)
+        return(NULL);
 
     element->sched_eloop = ev_loop_new(EVFLAG_AUTO);
     if(!element->sched_eloop)
     {
-        free(element->sched_eloop_timer);
-        free(element->sched_eloop_breaker);
-        return(-1);
+        free(element);
+        return(NULL);
     }
 
-    ev_async_init(element->sched_eloop_breaker, sched_eloop_breaker_cb);
-    ev_async_start(element->sched_eloop, element->sched_eloop_breaker);
+    ev_async_init(&element->sched_eloop_breaker, sched_eloop_breaker_cb);
+    ev_async_start(element->sched_eloop, &element->sched_eloop_breaker);
 
-    return(0);
+    return(element);
+}
+
+void abt_snoozer_wq_element_free(struct abt_snoozer_wq_element *element)
+{
+    ev_async_stop(element->sched_eloop, &element->sched_eloop_breaker);
+    ev_loop_destroy(element->sched_eloop);
+    free(element);
 }
 
 void abt_snoozer_wq_wait(struct abt_snoozer_wq *queue, 
@@ -95,9 +107,9 @@ void abt_snoozer_wq_wait(struct abt_snoozer_wq *queue,
         element->prev = NULL;
         element->wq = queue;
         /* arm timer */
-        ev_timer_init(element->sched_eloop_timer, sched_eloop_timer_cb, 
+        ev_timer_init(&element->sched_eloop_timer, sched_eloop_timer_cb, 
             timeout_seconds, 0);
-        ev_timer_start(element->sched_eloop, element->sched_eloop_timer);
+        ev_timer_start(element->sched_eloop, &element->sched_eloop_timer);
     }
 
     ABT_mutex_unlock(queue->mutex);
@@ -122,7 +134,7 @@ void abt_snoozer_wq_wait(struct abt_snoozer_wq *queue,
     else
     {
         /* already off queue; stop timer */
-        ev_timer_stop(element->sched_eloop, element->sched_eloop_timer);
+        ev_timer_stop(element->sched_eloop, &element->sched_eloop_timer);
     }
     ABT_mutex_unlock(queue->mutex);
 
@@ -153,7 +165,7 @@ void abt_snoozer_wq_wake(struct abt_snoozer_wq *queue)
 
     if(element)
     {
-        ev_async_send(element->sched_eloop, element->sched_eloop_breaker);
+        ev_async_send(element->sched_eloop, &element->sched_eloop_breaker);
     }
     
     return;

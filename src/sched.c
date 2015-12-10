@@ -20,11 +20,21 @@
 /******************************************************************************/
 typedef struct abt_snoozer_sched_data sched_data_t;
 
+struct abt_snoozer_sched_data {
+    uint32_t event_freq;
+    struct abt_snoozer_wq_element *wq_element;
+};
+
+
 static int sched_init(ABT_sched sched, ABT_sched_config config)
 {
     sched_data_t *p_data = (sched_data_t *)calloc(1, sizeof(sched_data_t));
 
     ABT_sched_config_read(config, 1, &p_data->event_freq);
+    p_data->wq_element = abt_snoozer_wq_element_alloc();
+    if(!p_data->wq_element)
+        return(ABT_ERR_MEM);
+
     ABT_sched_set_data(sched, (void *)p_data);
 
     return ABT_SUCCESS;
@@ -39,12 +49,14 @@ static void sched_run(ABT_sched sched)
     ABT_unit unit;
     ABT_bool stop;
     int loop_total;
+    struct abt_snoozer_pool_data *pool_data;
 
     ABT_sched_get_data(sched, (void **)&p_data);
     ABT_sched_get_num_pools(sched, &num_pools);
     /* this scheduler will only work with exactly one pool */
     assert(num_pools == 1);
     ABT_sched_get_pools(sched, num_pools, 0, &pool);
+    ABT_pool_get_data(pool, (void**)&pool_data);
 
     while (1) {
         loop_total = 0;
@@ -64,11 +76,10 @@ static void sched_run(ABT_sched sched)
             {
                 /* nothing to do; sleep unless signaled by a pool */
 
-                /* note: set a 1 ms timer to make sure that we have a chance
+                /* note: use a 10 ms timeout to make sure that we have a chance
                  * to observe stop notifications
                  */
-                ev_timer_start(p_data->ev.sched_eloop, p_data->ev.sched_eloop_timer);
-                ev_run(p_data->ev.sched_eloop, 0);
+                abt_snoozer_wq_wait(pool_data->wq, p_data->wq_element, .1);
             }
         }
     }
@@ -79,6 +90,7 @@ static int sched_free(ABT_sched sched)
     sched_data_t *p_data;
 
     ABT_sched_get_data(sched, (void **)&p_data);
+    abt_snoozer_wq_element_free(p_data->wq_element);
     free(p_data);
 
     return ABT_SUCCESS;

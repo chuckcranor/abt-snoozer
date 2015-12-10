@@ -105,6 +105,13 @@ static int pool_init(ABT_pool pool, ABT_pool_config config)
     p_data->num_units = 0;
     p_data->p_head = NULL;
     p_data->p_tail = NULL;
+    p_data->wq = abt_snoozer_wq_alloc();
+    if(!p_data->wq)
+    {
+        ABT_mutex_free(&p_data->mutex);
+        free(p_data);
+        return(ABT_ERR_MEM);
+    }
 
     ABT_pool_set_data(pool, p_data);
 
@@ -118,6 +125,8 @@ static int pool_free(ABT_pool pool)
     ABT_pool_get_data(pool, &data);
     data_t *p_data = pool_get_data_ptr(data);
 
+    abt_snoozer_wq_free(p_data->wq);
+    ABT_mutex_free(&p_data->mutex);
     free(p_data);
 
     return abt_errno;
@@ -157,7 +166,8 @@ static void pool_push_shared(ABT_pool pool, ABT_unit unit)
 
     p_unit->pool = pool;
     ABT_mutex_unlock(p_data->mutex);
-    ev_async_send(p_data->ev.sched_eloop, p_data->ev.sched_eloop_breaker);
+
+    abt_snoozer_wq_wake(p_data->wq);
 }
 
 static void pool_push_private(ABT_pool pool, ABT_unit unit)

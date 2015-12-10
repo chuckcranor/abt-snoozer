@@ -8,13 +8,9 @@
 #define __ABT_SNOOZER_INTERNAL
 
 #include <abt-snoozer.h>
-#include <ev.h>
 
-struct abt_snoozer_ev {
-    ev_async *sched_eloop_breaker;
-    ev_timer *sched_eloop_timer;
-    struct ev_loop *sched_eloop;
-};
+struct abt_snoozer_wq;
+struct abt_snoozer_wq_element;
 
 struct abt_snoozer_unit {
     struct abt_snoozer_unit *p_prev;
@@ -32,22 +28,18 @@ struct abt_snoozer_pool_data {
     size_t num_units;
     struct abt_snoozer_unit *p_head;
     struct abt_snoozer_unit *p_tail;
-    struct abt_snoozer_ev ev;
-};
-
-struct abt_snoozer_sched_data {
-    uint32_t event_freq;
-    struct abt_snoozer_ev ev;
+    struct abt_snoozer_wq* wq;
 };
 
 int abt_snoozer_pool_get_def(ABT_pool_access access, ABT_pool_def *p_def);
 int abt_snoozer_create_scheds(ABT_pool *pool, int num_scheds, ABT_sched *scheds);
 
-struct abt_snoozer_wq;
-struct abt_snoozer_wq_element;
+struct abt_snoozer_wq* abt_snoozer_wq_alloc(void);
+void abt_snoozer_wq_free(struct abt_snoozer_wq *wq);
 
-void abt_snoozer_wq_init(struct abt_snoozer_wq *queue);
-int abt_snoozer_wq_element_init(struct abt_snoozer_wq_element *element);
+struct abt_snoozer_wq_element* abt_snoozer_wq_element_alloc(void);
+void abt_snoozer_wq_element_free(struct abt_snoozer_wq_element *element);
+
 void abt_snoozer_wq_wait(struct abt_snoozer_wq *queue, 
     struct abt_snoozer_wq_element *element, double timeout_seconds);
 void abt_snoozer_wq_wake(struct abt_snoozer_wq *queue);
