@@ -51,7 +51,7 @@ int main(int argc, char **argv)
     assert(ret == 0);
 
     /* create one additional ES using the snoozer */
-    ret = ABT_snoozer_xstream_create(&pool2, &xstream2);
+    ret = ABT_snoozer_xstream_create(1, &pool2, &xstream2);
     assert(ret == 0);
 
     /* launch a ULT on the new ES that will do nothing except sleep() */

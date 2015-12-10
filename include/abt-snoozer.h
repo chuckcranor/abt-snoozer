@@ -12,11 +12,12 @@
 /**
  * Creates a new argobots xstream with a pool and scheduler defined to sleep
  * when idle. 
- * @param [out] newpool pool associated with new xstream
- * @param [out] newxstream newly created xstream
+ * @param [in] num_xstreams number of xstreams to create
+ * @param [out] newpool single pool associated with new xstreams
+ * @param [out] newxstreams newly created xstreams
  * @returns 0 on success, -1 upon error
  */
-int ABT_snoozer_xstream_create(ABT_pool *newpool, ABT_xstream *newxstream);
+int ABT_snoozer_xstream_create(int num_xstreams, ABT_pool *newpool, ABT_xstream *newxstreams);
 
 /**
  * Replaces pool and scheduler in xstream of caller with pool and scheduler
