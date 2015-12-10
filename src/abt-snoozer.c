@@ -47,6 +47,14 @@ static int abt_snoozer_make_pool_and_sched(ABT_pool *pool, ABT_sched *sched)
     if(ret != 0)
         return(ret);
 
+    /* TODO: start changing things here */
+    /* - get rid of the get_data stuff
+     * - intead have helper function that will go from pool->wq (using
+     *   get_data and knowledge of pool data format)
+     *   - use that helper when sleeping to wait on proper queue
+     *   - no need to expose any scheduler data
+     */
+
     ret = abt_snoozer_create_scheds(1, pool, sched);
     if(ret != 0)
     {
