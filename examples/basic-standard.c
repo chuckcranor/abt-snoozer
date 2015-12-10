@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     ABT_xstream_get_main_pools(xstream2, 1, &pool2);
 
     /* launch a ULT on the new ES that will do nothing except sleep() */
-    ABT_eventual_create(sizeof(eret), &eventual);
+    ABT_eventual_create(sizeof(*eret), &eventual);
     ABT_thread_create(pool2, thread_fn, &eventual, ABT_THREAD_ATTR_NULL, &tid);
 
     /* wait on eventual */

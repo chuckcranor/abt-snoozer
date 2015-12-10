@@ -66,7 +66,7 @@ int main(int argc, char **argv)
     /* launch 4 ULTs on shared pool that will do nothing except sleep() */
     for(i=0; i<4; i++)
     {
-        ABT_eventual_create(sizeof(eret), &eventuals[i]);
+        ABT_eventual_create(sizeof(*eret), &eventuals[i]);
         ABT_thread_create(shared_pool, thread_fn, &eventuals[i], ABT_THREAD_ATTR_NULL, &tids[i]);
     }
 
