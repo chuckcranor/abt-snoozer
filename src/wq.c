@@ -106,6 +106,7 @@ void abt_snoozer_wq_wait(struct abt_snoozer_wq *queue,
         element->next = queue->head;
         element->prev = NULL;
         element->wq = queue;
+        queue->head = element;
         /* arm timer */
         ev_timer_init(&element->sched_eloop_timer, sched_eloop_timer_cb, 
             timeout_seconds, 0);
