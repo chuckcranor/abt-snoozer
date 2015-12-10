@@ -55,7 +55,7 @@ static int abt_snoozer_make_pool_and_sched(ABT_pool *pool, ABT_sched *sched)
      *   - no need to expose any scheduler data
      */
 
-    ret = abt_snoozer_create_scheds(1, pool, sched);
+    ret = abt_snoozer_create_scheds(pool, 1, sched);
     if(ret != 0)
     {
         ABT_pool_free(pool);

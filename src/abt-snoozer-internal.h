@@ -41,7 +41,7 @@ struct abt_snoozer_sched_data {
 };
 
 int abt_snoozer_pool_get_def(ABT_pool_access access, ABT_pool_def *p_def);
-int abt_snoozer_create_scheds(int num, ABT_pool *pools, ABT_sched *scheds);
+int abt_snoozer_create_scheds(ABT_pool *pool, int num_scheds, ABT_sched *scheds);
 
 struct abt_snoozer_wq;
 struct abt_snoozer_wq_element;
