@@ -7,6 +7,10 @@
 #ifndef __ABT_SNOOZER
 #define __ABT_SNOOZER
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <abt.h>
 
 /**
@@ -26,5 +30,9 @@ int ABT_snoozer_xstream_create(int num_xstreams, ABT_pool *newpool, ABT_xstream 
  * @returns 0 on success, -1 upon error
  */
 int ABT_snoozer_xstream_self_set(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __ABT_SNOOZER */
