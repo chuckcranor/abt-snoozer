@@ -10,7 +10,7 @@
 #include <abt.h>
 #include <abt-snoozer.h>
 
-/* make sure that thread_join does not cause a busy spin */
+/* make sure that thread suspend does not cause a busy spin */
 
 void thread_fn(void *_arg)
 {
