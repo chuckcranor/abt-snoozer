@@ -17,6 +17,8 @@ EXTRA_DIST =
 BUILT_SOURCES =
 include_HEADERS = include/abt-snoozer.h
 
+LDADD = src/libabt-snoozer.a
+
 EXTRA_DIST += \
  prepare.sh 
 
