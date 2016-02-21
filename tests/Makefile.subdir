@@ -4,7 +4,8 @@ EXTRA_DIST += \
  tests/spintest-threadjoin.sh \
  tests/spintest-suspend.sh \
  tests/spintest-mutex.sh \
- tests/spintest-barrier.sh 
+ tests/spintest-barrier.sh \
+ tests/spintest-cond.sh 
 
 TESTS += \
  tests/comparison.sh \
@@ -12,14 +13,16 @@ TESTS += \
  tests/spintest-threadjoin.sh \
  tests/spintest-suspend.sh \
  tests/spintest-mutex.sh \
- tests/spintest-barrier.sh 
+ tests/spintest-barrier.sh \
+ tests/spintest-cond.sh 
 
 check_PROGRAMS += \
  tests/spintest-eventual \
  tests/spintest-threadjoin \
  tests/spintest-suspend \
  tests/spintest-mutex \
- tests/spintest-barrier
+ tests/spintest-barrier \
+ tests/spintest-cond
 
 XFAIL_TESTS += \
  tests/spintest-threadjoin.sh \
