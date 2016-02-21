@@ -1,6 +1,9 @@
 TESTS += \
- tests/comparison.sh
+ tests/comparison.sh \
+ tests/spintest-eventual.sh
 
 EXTRA_DIST += \
  tests/comparison.sh
 
+check_PROGRAMS += \
+ tests/spintest-eventual
