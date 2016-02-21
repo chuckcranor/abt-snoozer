@@ -1,9 +1,14 @@
 TESTS += \
  tests/comparison.sh \
- tests/spintest-eventual.sh
+ tests/spintest-eventual.sh \
+ tests/spintest-threadjoin.sh
+
+XFAIL_TESTS += \
+ tests/spintest-threadjoin.sh
 
 EXTRA_DIST += \
  tests/comparison.sh
 
 check_PROGRAMS += \
- tests/spintest-eventual
+ tests/spintest-eventual \
+ tests/spintest-threadjoin
