@@ -25,6 +25,5 @@ check_PROGRAMS += \
  tests/spintest-cond
 
 XFAIL_TESTS += \
- tests/spintest-threadjoin.sh \
  tests/spintest-mutex.sh
 
