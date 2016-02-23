@@ -11,8 +11,19 @@ See the following for more details about Argobots:
 
 ##  Dependencies
 
-* argobots (git://git.mcs.anl.gov/argo/argobots.git)
+* argobots (argobots-review repo, dev/opts-test branch):
+  (git://git.mcs.anl.gov/argo/argobots-review.git)
 * libev (e.g libev-dev package on Ubuntu or Debian)
+
+## Building Argobots (dependency)
+
+Example configuration:
+
+    ../configure --prefix=/home/pcarns/working/install --enable-perf-opt \
+     --enable-aligned-alloc --enable-single-alloc --enable-mem-pool \
+     --enable-mmap-hugepage --enable-opt-struct-thread --enable-opt-struct-task \
+     --enable-take-fcontext --enable-ult-join-opt --disable-thread-cancel \
+     --disable-task-cancel --disable-migration --enable-affinity
 
 ## Building
 
