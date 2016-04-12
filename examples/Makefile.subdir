@@ -1,2 +1,2 @@
-bin_PROGRAMS += examples/basic-standard examples/basic-snoozer examples/sharedpool-standard examples/sharedpool-snoozer
+noinst_PROGRAMS += examples/basic-standard examples/basic-snoozer examples/sharedpool-standard examples/sharedpool-snoozer
 
