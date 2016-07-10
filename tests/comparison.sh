@@ -33,8 +33,11 @@ if [ "$snoozerrealtime" -lt 5 ]; then
     exit 1
 fi
 
-# standard one should also take at least 5 user seconds
-if [ "$standardusertime" -lt 5 ]; then
+# standard one should also take at least 4 user seconds
+# note: we set 4 as the threshold rather than 5, because it isn't uncommon
+# for the test to report 4.9 seconds consumed, and we have truncated the
+# decimal in this script.
+if [ "$standardusertime" -lt 4 ]; then
     exit 1
 fi
 # snoozer one should take less than one user second
