@@ -3,9 +3,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 bin_PROGRAMS =
 bin_SCRIPTS =
-noinst_LIBRARIES =
 noinst_PROGRAMS =
-lib_LIBRARIES =
 noinst_HEADERS =
 TESTS =
 XFAIL_TESTS = 
@@ -17,7 +15,7 @@ EXTRA_DIST =
 BUILT_SOURCES =
 include_HEADERS = include/abt-snoozer.h
 
-LDADD = src/libabt-snoozer.a
+LDADD = src/libabt-snoozer.la
 
 EXTRA_DIST += \
  prepare.sh 
@@ -30,8 +28,8 @@ AM_LIBS =
 
 AM_CXXFLAGS = $(AM_CFLAGS)
 
-lib_LIBRARIES += src/libabt-snoozer.a
-src_libabt_snoozer_a_SOURCES =
+lib_LTLIBRARIES = src/libabt-snoozer.la
+src_libabt_snoozer_la_SOURCES = 
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = maint/abt-snoozer.pc

@@ -35,9 +35,8 @@ dnl
 dnl Verify pkg-config
 dnl
 PKG_PROG_PKG_CONFIG
-PKG_CONFIG="pkg-config --static"
 
-PKG_CHECK_MODULES_STATIC([ARGOBOTS],[argobots],[],
+PKG_CHECK_MODULES([ARGOBOTS],[argobots],[],
    [AC_MSG_ERROR([Could not find working argobots installation!])])
 LIBS="$ARGOBOTS_LIBS $LIBS"
 CPPFLAGS="$ARGOBOTS_CFLAGS $CPPFLAGS"

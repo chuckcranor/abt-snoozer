@@ -1,4 +1,4 @@
-src_libabt_snoozer_a_SOURCES += \
+src_libabt_snoozer_la_SOURCES += \
  src/sched.c \
  src/pool.c \
  src/abt-snoozer.c \
