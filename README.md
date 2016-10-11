@@ -11,8 +11,7 @@ See the following for more details about Argobots:
 
 ##  Dependencies
 
-* argobots (origin/master):
-  (git://git.mcs.anl.gov/argo/argobots.git)
+* argobots (git clone https://github.com/pmodels/argobots.git)
 * libev (e.g libev-dev package on Ubuntu or Debian)
 
 ## Building Argobots (dependency)
