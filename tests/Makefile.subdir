@@ -24,6 +24,3 @@ check_PROGRAMS += \
  tests/spintest-barrier \
  tests/spintest-cond
 
-XFAIL_TESTS += \
- tests/spintest-mutex.sh
-
