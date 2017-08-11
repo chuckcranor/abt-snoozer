@@ -14,7 +14,8 @@ TESTS += \
  tests/spintest-suspend.sh \
  tests/spintest-mutex.sh \
  tests/spintest-barrier.sh \
- tests/spintest-cond.sh 
+ tests/spintest-cond.sh \
+ tests/multi-es-pool-mutex
 
 check_PROGRAMS += \
  tests/spintest-eventual \
@@ -22,5 +23,6 @@ check_PROGRAMS += \
  tests/spintest-suspend \
  tests/spintest-mutex \
  tests/spintest-barrier \
- tests/spintest-cond
+ tests/spintest-cond \
+ tests/multi-es-pool-mutex
 
