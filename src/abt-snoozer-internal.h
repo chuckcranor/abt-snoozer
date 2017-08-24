@@ -12,22 +12,10 @@
 struct abt_snoozer_wq;
 struct abt_snoozer_wq_element;
 
-struct abt_snoozer_unit {
-    struct abt_snoozer_unit *p_prev;
-    struct abt_snoozer_unit *p_next;
-    ABT_pool pool;
-    union {
-        ABT_thread thread;
-        ABT_task   task;
-    };
-    ABT_unit_type type;
-};
-
+#define ABT_SNOOZER_POOL_DATA_PADDING 256
 struct abt_snoozer_pool_data {
-    ABT_mutex mutex;
-    size_t num_units;
-    struct abt_snoozer_unit *p_head;
-    struct abt_snoozer_unit *p_tail;
+    /* allow space for underlying pool data */
+    char data[ABT_SNOOZER_POOL_DATA_PADDING]; 
     struct abt_snoozer_wq* wq;
 };
 
