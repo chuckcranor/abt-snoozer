@@ -11,8 +11,14 @@ See the following for more details about Argobots:
 
 ##  Dependencies
 
-* argobots (git clone https://github.com/pmodels/argobots.git)
+* argobots (git -b dev-get-dev-basic clone https://github.com/carns/argobots.git)
 * libev (e.g libev-dev package on Ubuntu or Debian)
+
+Note that the Argobots repo named above is *not* the primary upstream
+repository, but rather a fork that includes an additional feature needed by
+abt-snoozer in the short term.  abt-snoozer will be updated to work with the
+upstream repository without modifications once
+https://github.com/pmodels/argobots/issues/26 is resolved.
 
 ## Building Argobots (dependency)
 
